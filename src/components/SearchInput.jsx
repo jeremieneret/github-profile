@@ -1,7 +1,5 @@
-// src/components/SearchInput.js
-import React from "react";
-
 const SearchInput = ({ username, onUsernameChange, onEnter }) => {
+  // Detects when the user presses "Enter" in the input field
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       onEnter();
@@ -15,7 +13,7 @@ const SearchInput = ({ username, onUsernameChange, onEnter }) => {
         placeholder="Enter GitHub username"
         value={username}
         onChange={onUsernameChange}
-        onKeyDown={handleKeyDown}
+        onKeyDown={handleKeyDown} // Attaches key event listener
       />
     </div>
   );
