@@ -1,77 +1,104 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import './style/CSS/style.css'
+// src/App.jsx
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import SearchInput from "./components/SearchInput";
+import ProfilePreview from "./components/ProfilePreview";
+import ProfileDetails from "./components/ProfileDetails";
+import RepoList from "./components/RepoList";
+import "./style/CSS/style.css";
 
 function App() {
-  // Modifier l'état initial pour info et repos
-  const [info, setInfo] = useState({});
+  const [username, setUsername] = useState("");
+  const [info, setInfo] = useState(null);
+  const [repos, setRepos] = useState([]);
   const [error, setError] = useState(null);
-  const [repos, setRepos] = useState([]); // initialisé en tableau
+  const [isLoading, setIsLoading] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+
+  // Helper pour calculer le nombre de jours écoulés depuis une date donnée
+  const getDaysElapsed = (dateString) => {
+    const updatedDate = new Date(dateString);
+    const now = new Date();
+    const timeDiff = now - updatedDate; // en millisecondes
+    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    return daysDiff;
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "https://api.github.com/users/github"
-        );
-        setInfo(response.data);
-        console.log(response.data);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
+    if (!username) {
+      setInfo(null);
+      setRepos([]);
+      return;
+    }
 
-    const fetchData2 = async () => {
-      try {
-        const response = await axios.get(
-          "https://api.github.com/users/github/repos"
-        );
-        setRepos(response.data);
-        console.log(response.data);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
+    setIsLoading(true);
+    setError(null);
 
-    fetchData();
-    fetchData2();
-  }, []);
+    Promise.all([
+      axios.get(`https://api.github.com/users/${username}`),
+      axios.get(`https://api.github.com/users/${username}/repos`)
+    ])
+      .then(([userResponse, reposResponse]) => {
+        setInfo(userResponse.data);
+        setRepos(reposResponse.data);
+      })
+      .catch((err) => {
+        setError(
+          err.response?.data?.message || err.message || "An error occurred"
+        );
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [username]);
+
+  // Réinitialisation dès qu'on modifie le champ de recherche
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+    setExpanded(false);
+    setShowAll(false);
+  };
+
+  // Lorsqu'on appuie sur "Entrée", si des infos existent, on affiche le détail
+  const handleEnter = () => {
+    if (info) {
+      setExpanded(true);
+    }
+  };
 
   return (
-    <>
-      {error && <p>Error: {error}</p>}
-      <input type="text" placeholder="username" />
-      <div>
-        <img src={info.avatar_url} alt="Avatar" />
-        <div>
-          <p>Followers</p>
-          <p>{info.followers}</p>
-        </div>
-        <div>
-          <p>Following</p>
-          <p>{info.following}</p>
-        </div>
-        <div>
-          <p>Location</p>
-          <p>{info.location}</p>
-        </div>
-      </div>
-      <div>
-        <h1>{info.name}</h1>
-        <p>{info.bio}</p>
-      </div>
-      <div>
-        {/* Afficher les 4 premiers repos */}
-        {repos.slice(0, 4).map((repo) => (
-          <div key={repo.id}>
-            <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
-              <h3>{repo.name}</h3>
-              <p>{repo.description}</p>
-            </a>
-          </div>
-        ))}
-      </div>
-    </>
+    <div
+      className="app-container"
+      style={{ padding: "20px", fontFamily: "sans-serif" }}
+    >
+      {error && <p style={{ color: "red" }}>Error: {error}</p>}
+      <SearchInput
+        username={username}
+        onUsernameChange={handleUsernameChange}
+        onEnter={handleEnter}
+      />
+
+      {isLoading && <p>Loading data...</p>}
+
+      {/* Vue preview : affichée si info est présente et si le mode détaillé n'est pas activé */}
+      {info && !isLoading && !expanded && (
+        <ProfilePreview info={info} onClick={() => setExpanded(true)} />
+      )}
+
+      {/* Vue détaillée : affichée soit par clic sur le preview, soit en appuyant sur "Entrée" */}
+      {expanded && info && !isLoading && (
+        <>
+          <ProfileDetails info={info} />
+          <RepoList
+            repos={repos}
+            showAll={showAll}
+            getDaysElapsed={getDaysElapsed}
+            onViewAll={() => setShowAll(true)}
+          />
+        </>
+      )}
+    </div>
   );
 }
 
