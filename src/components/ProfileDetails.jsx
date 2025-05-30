@@ -1,12 +1,10 @@
 const ProfileDetails = ({ info }) => {
   return (
-    <div className="profile-details" style={{ marginTop: "20px" }}>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        {/* Enlarged avatar */}
+    <div className="profile-details">
+      <div>
         <img 
           src={info.avatar_url} 
           alt="Avatar" 
-          style={{ width: "100px", borderRadius: "50%", marginRight: "20px" }}
         />
         {/* Display profile statistics */}
         <div>
@@ -15,7 +13,7 @@ const ProfileDetails = ({ info }) => {
           <p><strong>Location:</strong> {info.location ? info.location : "Not specified"}</p>
         </div>
       </div>
-      <div style={{ marginTop: "10px" }}>
+      <div>
         <h1>{info.name || info.login}</h1> {/* Display name or login */}
         <p>{info.bio ? info.bio : "No bio available."}</p> {/* Display bio or default message */}
       </div>

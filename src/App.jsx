@@ -7,13 +7,14 @@ import RepoList from "./components/RepoList";
 import "./style/CSS/style.css";
 
 function App() {
-  const [username, setUsername] = useState("");
-  const [info, setInfo] = useState(null);
-  const [repos, setRepos] = useState([]);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-  const [showAll, setShowAll] = useState(false);
+  const [username, setUsername] = useState(""); // Stores the entered username
+  const [info, setInfo] = useState(null); // Stores user profile data
+  const [repos, setRepos] = useState([]); // Stores repositories data
+  const [error, setError] = useState(null); // Stores any API errors
+  const [isLoading, setIsLoading] = useState(false); // Tracks loading state
+  const [showDropdown, setShowDropdown] = useState(false); // Controls dropdown visibility
+  const [expanded, setExpanded] = useState(false); // Controls full profile visibility
+  const [showAll, setShowAll] = useState(false); // Controls repository list expansion
 
   // Function to calculate the number of days since the last update
   const getDaysElapsed = (dateString) => {
@@ -23,16 +24,23 @@ function App() {
   };
 
   useEffect(() => {
+    // Clears the user info if input is empty
     if (!username) {
       setInfo(null);
       setRepos([]);
+      setShowDropdown(false);
       return;
     }
+  }, [username]);
+
+  // Handles pressing "Enter" to fetch user data and display the dropdown
+  const handleEnter = () => {
+    if (!username) return;
 
     setIsLoading(true);
     setError(null);
 
-    // Fetch user info and repositories in parallel
+    // Fetch profile and repositories simultaneously
     Promise.all([
       axios.get(`https://api.github.com/users/${username}`),
       axios.get(`https://api.github.com/users/${username}/repos`)
@@ -40,35 +48,46 @@ function App() {
       .then(([userResponse, reposResponse]) => {
         setInfo(userResponse.data);
         setRepos(reposResponse.data);
+        setShowDropdown(true); // Show dropdown after data retrieval
       })
       .catch((err) => {
         setError(err.response?.data?.message || err.message || "An error occurred");
+        setShowDropdown(true); // Show dropdown with error message
       })
       .finally(() => {
         setIsLoading(false);
       });
-  }, [username]);
+  };
 
+  // Handles input change, resets expanded state, and hides dropdown
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
     setExpanded(false);
+    setShowDropdown(false);
     setShowAll(false);
   };
 
-  const handleEnter = () => {
-    if (info) {
+  // Expands the full view only if there is no error
+  const handleDropdownClick = () => {
+    if (!error) {
       setExpanded(true);
     }
   };
 
   return (
     <div className="app-container">
-      {error && <p style={{ color: "red" }}>Error: {error}</p>}
+      {/* Input field for username */}
       <SearchInput username={username} onUsernameChange={handleUsernameChange} onEnter={handleEnter} />
+      
+      {/* Loading state indicator */}
       {isLoading && <p>Loading data...</p>}
-      {info && !expanded && <ProfilePreview info={info} onClick={() => setExpanded(true)} />}
-      {expanded && info && <ProfileDetails info={info} />}
-      {expanded && info && <RepoList repos={repos} showAll={showAll} getDaysElapsed={getDaysElapsed} onViewAll={() => setShowAll(true)} />}
+
+      {/* Displays dropdown after "Enter" is pressed */}
+      {showDropdown && <ProfilePreview info={info} error={error} onClick={handleDropdownClick} />}
+
+      {/* Expands full profile details on dropdown click */}
+      {expanded && !error && <ProfileDetails info={info} />}
+      {expanded && !error && <RepoList repos={repos} showAll={showAll} getDaysElapsed={getDaysElapsed} onViewAll={() => setShowAll(true)} />}
     </div>
   );
 }
