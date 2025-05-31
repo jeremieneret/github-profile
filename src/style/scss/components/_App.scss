@@ -1,13 +1,15 @@
+@use '../tools/' as *;
+
 .app-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 32px;
+  padding: 0 32px 32px 32px;
 }
 
 .background-img {
   position: absolute;
-  background-image: url(/assets/hero-image-github-profile.jpg);
+  background-image: url('/assets/hero-image-github-profile.jpg');
   background-repeat: no-repeat;
   background-position: top;
   background-size: cover;

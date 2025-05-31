@@ -1,12 +1,21 @@
 @use "../tools/" as *;
 
 .profile-details {
-  margin-top: -30px;
+  @include media-max(1000px) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+.profile-details-container {
   img {
     width: 120px;
+    height: 120px;
     border: solid 8px $background;
     border-radius: 20px;
     margin-right: 40px;
+    @include media-max(1000px) {
+      margin: 0 0 16px 0;
+    }
   }
   div:nth-child(1) {
     display: flex;
@@ -14,7 +23,7 @@
   .profile-infos {
     display: flex;
     background-color: #111729;
-    height: -moz-fit-content;
+    width: fit-content;
     height: fit-content;
     margin-right: 20px;
     align-items: center;
@@ -22,6 +31,9 @@
     padding: 0 20px;
     border-radius: 12px;
     margin-top: 60px;
+    @include media-max(1000px) {
+      margin-top: 20px;
+    }
     div {
       width: 1px;
       height: 36px;
@@ -30,6 +42,13 @@
     }
     p {
       font-size: 16px;
+    }
+  }
+  .profile-infos-container {
+    display: flex;
+    @include media-max(1000px) {
+      display: block;
+      margin-bottom: 32px;
     }
   }
   h1 {

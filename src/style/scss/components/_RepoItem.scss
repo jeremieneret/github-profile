@@ -1,7 +1,10 @@
 @use "../tools/" as *;
 
 .repo-item {
-  max-width: 539px;
+  max-width: 48%;
+  @include media-max(1000px) {
+    max-width: 100%;
+  }
   width: 100%;
   height: fit-content;
   padding: 20px;

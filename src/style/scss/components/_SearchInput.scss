@@ -2,7 +2,8 @@
 
 .search-input {
   margin: 32px auto 8px auto;
-  width: 484px;
+  max-width: 484px;
+  width: 100%;
   height: 56px;
   display: flex;
   z-index: 1;

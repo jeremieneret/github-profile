@@ -4,7 +4,8 @@
   display: flex;
   align-items: center;
   margin: 0 auto;
-  width: 484px;
+  max-width: 484px;
+  width: 100%;
   padding: 8px;
   background-color: $ebony;
   border-radius: 12px;
