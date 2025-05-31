@@ -1,0 +1,16 @@
+@use '../tools/' as *;
+
+.repo-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+
+.button-container {
+  margin: 47px auto 0 auto;
+  button {
+    font-size: 16px;
+    font-weight: 500;
+    color: $primary;
+  }
+}

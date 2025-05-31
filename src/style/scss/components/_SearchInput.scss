@@ -1,0 +1,27 @@
+@use '../tools' as *;
+
+.search-input {
+  margin: 32px auto 8px auto;
+  width: 484px;
+  height: 56px;
+  display: flex;
+  z-index: 1;
+  .img-container {
+    height: 100%;
+    padding: 16px 0 16px 16px;
+    border-radius: 12px 0 0 12px;
+    background-color: $background;
+  }
+  input {
+    width: 100%;
+    padding: 16px;
+    background-color: $background;
+    color: $primary;
+    font-weight: 500;
+    border-radius: 0 12px 12px 0;
+    font-size: 16px;
+    &::placeholder {
+      color: $secondary;
+    }
+  }
+}

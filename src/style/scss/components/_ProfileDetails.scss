@@ -1,0 +1,45 @@
+@use "../tools/" as *;
+
+.profile-details {
+  margin-top: -30px;
+  img {
+    width: 120px;
+    border: solid 8px $background;
+    border-radius: 20px;
+    margin-right: 40px;
+  }
+  div:nth-child(1) {
+    display: flex;
+  }
+  .profile-infos {
+    display: flex;
+    background-color: #111729;
+    height: -moz-fit-content;
+    height: fit-content;
+    margin-right: 20px;
+    align-items: center;
+    border: solid 8px $ebony;
+    padding: 0 20px;
+    border-radius: 12px;
+    margin-top: 60px;
+    div {
+      width: 1px;
+      height: 36px;
+      background-color: #364153;
+      margin: 0 20px;
+    }
+    p {
+      font-size: 16px;
+    }
+  }
+  h1 {
+    margin: 20px 0 16px 0;
+    font-weight: 500;
+    font-size: 32px;
+  }
+  .description {
+    font-weight: 400;
+    margin-bottom: 34px;
+  }
+}
+

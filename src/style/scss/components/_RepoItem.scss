@@ -1,0 +1,35 @@
+@use "../tools/" as *;
+
+.repo-item {
+  max-width: 539px;
+  width: 100%;
+  height: fit-content;
+  padding: 20px;
+  background: linear-gradient(95deg, #111729 3%, #1d1b48 99.61%);
+  border-radius: 12px;
+  h3 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  p {
+    font-weight: 300;
+    color: $secondary;
+    margin-bottom: 20px;
+  }
+  div {
+    display: flex;
+    p {
+      margin-right: 12px;
+      transform: translateY(10px);
+      font-weight: 500;
+      &.update {
+        font-size: 12px;
+        transform: translateY(12px);
+      }
+    }
+    img {
+      margin-right: 2px;
+    }
+  }
+}

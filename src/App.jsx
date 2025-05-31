@@ -7,16 +7,16 @@ import RepoList from "./components/RepoList";
 import "./style/CSS/style.css";
 
 function App() {
-  const [username, setUsername] = useState(""); // Stores the entered username
-  const [info, setInfo] = useState(null); // Stores user profile data
-  const [repos, setRepos] = useState([]); // Stores repositories data
-  const [error, setError] = useState(null); // Stores any API errors
-  const [isLoading, setIsLoading] = useState(false); // Tracks loading state
-  const [showDropdown, setShowDropdown] = useState(false); // Controls dropdown visibility
-  const [expanded, setExpanded] = useState(false); // Controls full profile visibility
-  const [showAll, setShowAll] = useState(false); // Controls repository list expansion
+  const [username, setUsername] = useState("");
+  const [info, setInfo] = useState(null);
+  const [repos, setRepos] = useState([]);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
-  // Function to calculate the number of days since the last update
+  // Helper function to calculate days elapsed since last update
   const getDaysElapsed = (dateString) => {
     const updatedDate = new Date(dateString);
     const now = new Date();
@@ -24,7 +24,6 @@ function App() {
   };
 
   useEffect(() => {
-    // Clears the user info if input is empty
     if (!username) {
       setInfo(null);
       setRepos([]);
@@ -33,14 +32,13 @@ function App() {
     }
   }, [username]);
 
-  // Handles pressing "Enter" to fetch user data and display the dropdown
+  // Fetch data on "Enter" key press
   const handleEnter = () => {
     if (!username) return;
 
     setIsLoading(true);
     setError(null);
 
-    // Fetch profile and repositories simultaneously
     Promise.all([
       axios.get(`https://api.github.com/users/${username}`),
       axios.get(`https://api.github.com/users/${username}/repos`)
@@ -48,7 +46,7 @@ function App() {
       .then(([userResponse, reposResponse]) => {
         setInfo(userResponse.data);
         setRepos(reposResponse.data);
-        setShowDropdown(true); // Show dropdown after data retrieval
+        setShowDropdown(true); // Show dropdown after fetching data
       })
       .catch((err) => {
         setError(err.response?.data?.message || err.message || "An error occurred");
@@ -59,7 +57,7 @@ function App() {
       });
   };
 
-  // Handles input change, resets expanded state, and hides dropdown
+  // Handle input change, reset states
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
     setExpanded(false);
@@ -67,28 +65,32 @@ function App() {
     setShowAll(false);
   };
 
-  // Expands the full view only if there is no error
+  // Expands full profile and hides the dropdown
   const handleDropdownClick = () => {
     if (!error) {
       setExpanded(true);
+      setShowDropdown(false); // Hide dropdown on click
     }
   };
 
   return (
-    <div className="app-container">
-      {/* Input field for username */}
-      <SearchInput username={username} onUsernameChange={handleUsernameChange} onEnter={handleEnter} />
-      
-      {/* Loading state indicator */}
-      {isLoading && <p>Loading data...</p>}
+    <>
+      <div className="background-img"></div>
+      <div className="app-container">
+        <SearchInput username={username} onUsernameChange={handleUsernameChange} onEnter={handleEnter} />
 
-      {/* Displays dropdown after "Enter" is pressed */}
-      {showDropdown && <ProfilePreview info={info} error={error} onClick={handleDropdownClick} />}
+        {isLoading && <p>Loading data...</p>}
 
-      {/* Expands full profile details on dropdown click */}
-      {expanded && !error && <ProfileDetails info={info} />}
-      {expanded && !error && <RepoList repos={repos} showAll={showAll} getDaysElapsed={getDaysElapsed} onViewAll={() => setShowAll(true)} />}
-    </div>
+        {/* Only display dropdown if `expanded` is FALSE */}
+        {showDropdown && !expanded && <ProfilePreview info={info} error={error} onClick={handleDropdownClick} />}
+
+        <div className="full-details">
+          {/* Show full details only after clicking the dropdown */}
+          {expanded && !error && <ProfileDetails info={info} />}
+          {expanded && !error && <RepoList repos={repos} showAll={showAll} getDaysElapsed={getDaysElapsed} onViewAll={() => setShowAll(true)} />}
+        </div>
+      </div>
+    </>
   );
 }
 
